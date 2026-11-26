@@ -17,6 +17,7 @@ select,input{font:inherit;color:var(--tx);background:var(--card);border:1px soli
 .card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:10px 12px;margin:10px 0;font-size:.92rem;line-height:1.5}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
 .grid button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;height:88px;border-radius:16px;border:2px solid var(--pk);background:var(--card);color:var(--tx);font:600 1rem system-ui;cursor:pointer}
+.grid button:last-child:nth-child(odd){grid-column:1/-1}
 .grid button span{font-size:1.9rem}.grid button:active{background:var(--pk)}
 .pick{display:grid;gap:12px;margin:16px 0}
 .pick button{display:flex;flex-direction:column;align-items:center;gap:4px;padding:22px 12px;border-radius:20px;border:2px solid var(--pk);background:var(--card);color:var(--tx);font:700 1.2rem system-ui;cursor:pointer}
@@ -66,11 +67,11 @@ select,input{font:inherit;color:var(--tx);background:var(--card);border:1px soli
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script src="config.js"></script>
 <script>
-const T={susu:['🍼','Susu','ml, mis. 120'],bak:['💧','BAK','catatan'],bab:['💩','BAB','warna / konsistensi'],tidur:['😴','Tidur','catatan'],bangun:['☀️','Bangun','catatan'],gumoh:['🤮','Gumoh','catatan'],obat:['💊','Obat','nama & dosis'],suhu:['🌡️','Suhu','°C, mis. 36.8'],mandi:['🛁','Mandi','catatan'],
+const T={susu:['🍼','Susu','ml, mis. 120'],asi:['🤱','ASI','mis. 100 ml / kiri 15 mnt'],sufor:['🍼','Sufor','ml, mis. 120'],bak:['💧','BAK','catatan'],bab:['💩','BAB','warna / konsistensi'],tidur:['😴','Tidur','catatan'],bangun:['☀️','Bangun','catatan'],gumoh:['🤮','Gumoh','catatan'],obat:['💊','Obat','nama & dosis'],suhu:['🌡️','Suhu','°C, mis. 36.8'],mandi:['🛁','Mandi','catatan'],
   pompa:['🥛','Pompa ASI','ml, mis. 100'],makan:['🍽️','Makan','menu'],minum:['🚰','Minum','ml, mis. 250'],tensi:['🩺','Tensi','mis. 120/80'],bb:['⚖️','Berat','kg, mis. 58.5'],keluhan:['📝','Keluhan','catatan'],olahraga:['🚶','Jalan/senam','menit / catatan']};
-const U={susu:' ml',pompa:' ml',minum:' ml',suhu:' °C',bb:' kg'};
-const BTN={anak:['susu','bak','bab','SLEEP','gumoh','obat','suhu','mandi'],ibu:['pompa','makan','minum','SLEEP','obat','tensi','bb','suhu','keluhan','olahraga']};
-const LAST={anak:['susu','bak','bab'],ibu:['pompa','makan','minum','obat']};
+const U={susu:' ml',sufor:' ml',pompa:' ml',minum:' ml',suhu:' °C',bb:' kg'};
+const BTN={anak:['asi','sufor','bak','bab','SLEEP','gumoh','obat','suhu','mandi'],ibu:['pompa','makan','minum','SLEEP','obat','tensi','bb','suhu','keluhan','olahraga']};
+const LAST={anak:[{l:'Susu',t:['asi','sufor','susu']},{l:'BAK',t:['bak']},{l:'BAB',t:['bab']}],ibu:[{l:'Pompa ASI',t:['pompa']},{l:'Makan',t:['makan']},{l:'Minum',t:['minum']},{l:'Obat',t:['obat']}]};
 const NAMA={anak:'Anak',ibu:'Ibu'};
 const GREET={anak:'Hai Adik Ziva, bagaimana hari ini?',ibu:'Hai Ibun Efri, bagaimana hari ini?'};
 const $=id=>document.getElementById(id),p=n=>String(n).padStart(2,'0'),D=t=>new Date(t);
@@ -88,10 +89,10 @@ try{if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js')}ca
 const mine=()=>rows.filter(r=>r.sub===subj);
 const sleeping=()=>{const s=mine().find(r=>r.type==='tidur'||r.type==='bangun');return s&&s.type==='tidur'?s:null};
 function sumFor(l){
-  const s={susu:0,ml:0,bak:0,bab:0,gumoh:0,mn:0,pompa:0,pml:0,minum:0,makan:0,obat:0};
+  const s={susu:0,asi:0,sufor:0,ml:0,bak:0,bab:0,gumoh:0,mn:0,pompa:0,pml:0,minum:0,makan:0,obat:0};
   const ml=r=>{const m=/(\d+)\s*ml/.exec(r.d||'');return m?+m[1]:0};
   for(const r of l){const t=r.type;
-    if(t==='susu'){s.susu++;s.ml+=ml(r)}else if(t==='pompa'){s.pompa++;s.pml+=ml(r)}else if(t==='minum'){s.minum+=ml(r)}
+    if(t==='susu'||t==='asi'||t==='sufor'){s.susu++;s.ml+=ml(r);if(t==='asi')s.asi++;if(t==='sufor')s.sufor++}else if(t==='pompa'){s.pompa++;s.pml+=ml(r)}else if(t==='minum'){s.minum+=ml(r)}
     else if(['bak','bab','gumoh','makan','obat'].includes(t))s[t]++;
     if(r.mn)s.mn+=r.mn}
   return s}
@@ -110,12 +111,12 @@ function render(){
     const b=document.createElement('button'),e=document.createElement('span');
     e.textContent=T[k][0];b.append(e,T[k][1]);b.onclick=()=>tap(k);g.append(b)}
   const L=$('last');L.textContent='';
-  const lines=LAST[subj].map(k=>{const r=V.find(x=>x.type===k);return T[k][1]+' terakhir: '+(r?hms(r.ts).slice(0,5)+' ('+ago(r.ts)+')':'-')});
+  const lines=LAST[subj].map(g=>{const r=V.find(x=>g.t.includes(x.type));return g.l+' terakhir: '+(r?hms(r.ts).slice(0,5)+' ('+ago(r.ts)+')'+(g.t.length>1?' · '+T[r.type][1]:''):'-')});
   if(sl)lines.unshift('😴 Sedang tidur sejak '+hms(sl.ts).slice(0,5)+' ('+ago(sl.ts).replace(' lalu','')+')');
   for(const t of lines){const d=document.createElement('div');d.textContent=t;L.append(d)}
   const st=new Date();st.setHours(0,0,0,0);const z=sumFor(V.filter(r=>r.ts>=st.getTime()));
   $('sum').textContent=subj==='anak'
-    ?'Hari ini: Susu '+z.susu+'× ('+z.ml+' ml) · BAK '+z.bak+'× · BAB '+z.bab+'× · Gumoh '+z.gumoh+'× · Tidur '+dur(z.mn)
+    ?'Hari ini: Susu '+z.susu+'× ('+z.ml+' ml; ASI '+z.asi+'×, Sufor '+z.sufor+'×) · BAK '+z.bak+'× · BAB '+z.bab+'× · Gumoh '+z.gumoh+'× · Tidur '+dur(z.mn)
     :'Hari ini: Pompa '+z.pompa+'× ('+z.pml+' ml) · Minum '+z.minum+' ml · Makan '+z.makan+'× · Obat '+z.obat+'× · Tidur '+dur(z.mn);
   const H=$('hist');H.textContent='';H.className='';
   if(!V.length){H.textContent='Belum ada catatan. Tekan salah satu tombol di atas.';H.className='note'}
@@ -152,9 +153,9 @@ function exp(r){
   const q=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"';
   let c='Tanggal,Jam,Aktivitas,Detail,Dicatat oleh\n'+l.map(x=>[ymd(x.ts),hms(x.ts),T[x.type]?T[x.type][1]:x.type,x.d,x.by].map(q).join(',')).join('\n');
   const days=[...new Set(l.map(x=>ymd(x.ts)))];
-  const head=subj==='anak'?'Tanggal,Susu (x),Susu (ml),BAK (x),BAB (x),Gumoh (x),Tidur (menit)':'Tanggal,Pompa (x),Pompa (ml),Minum (ml),Makan (x),Obat (x),Tidur (menit)';
+  const head=subj==='anak'?'Tanggal,Susu (x),Susu (ml),ASI (x),Sufor (x),BAK (x),BAB (x),Gumoh (x),Tidur (menit)':'Tanggal,Pompa (x),Pompa (ml),Minum (ml),Makan (x),Obat (x),Tidur (menit)';
   c+='\n\nRekap harian ('+NAMA[subj]+')\n'+head+'\n'+days.map(d=>{const z=sumFor(l.filter(x=>ymd(x.ts)===d));
-    return (subj==='anak'?[d,z.susu,z.ml,z.bak,z.bab,z.gumoh,z.mn]:[d,z.pompa,z.pml,z.minum,z.makan,z.obat,z.mn]).join(',')}).join('\n');
+    return (subj==='anak'?[d,z.susu,z.ml,z.asi,z.sufor,z.bak,z.bab,z.gumoh,z.mn]:[d,z.pompa,z.pml,z.minum,z.makan,z.obat,z.mn]).join(',')}).join('\n');
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob(['\ufeff'+c],{type:'text/csv;charset=utf-8'}));
   a.download='rekap-'+subj+'-'+{d:'harian',w:'mingguan',m:'bulanan'}[r]+'-'+ymd(Date.now())+'.csv';
