@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html lang="id"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#e8719b">
+<meta name="theme-color" content="#FFC5D3">
 <link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon.svg">
-<title>Catatan Bayi</title>
+<title>Catatan Keluarga</title>
 <style>
-:root{--bg:#fffaf5;--card:#fff;--tx:#2b2430;--mut:#7a7083;--ac:#e8719b;--bd:#eadfe6}
-@media(prefers-color-scheme:dark){:root{--bg:#17141a;--card:#221e27;--tx:#f1ecf4;--mut:#a79eb0;--ac:#f08ab0;--bd:#352f3b;color-scheme:dark}}
+:root{--bg:#FAF3EB;--card:#FFFCF8;--tx:#4A2F38;--mut:#8C6F78;--pk:#FFC5D3;--pkd:#E8869F;--bd:#F1DCD6}
 body{margin:0;background:var(--bg);color:var(--tx);font:16px system-ui,-apple-system,sans-serif;padding-top:env(safe-area-inset-top,0px)}
 [hidden]{display:none!important}
 .wrap{max-width:520px;margin:0 auto;padding:14px 14px 90px}
@@ -14,23 +13,28 @@ header{display:flex;justify-content:space-between;align-items:center;gap:8px}
 h1{font-size:1.3rem;margin:6px 0}h2{font-size:1rem;margin:22px 0 8px;color:var(--mut)}
 select,input{font:inherit;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:8px 10px}
 .note{color:var(--mut);font-size:.85rem;margin:4px 0}
+.hi{background:var(--pk);border-radius:18px;padding:16px 18px;margin:10px 0;font:700 1.15rem/1.35 system-ui}
 .card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:10px 12px;margin:10px 0;font-size:.92rem;line-height:1.5}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
-.grid button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;height:88px;border-radius:16px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font:600 1rem system-ui;cursor:pointer}
-.grid button span{font-size:1.9rem}.grid button:active{background:var(--ac);color:#fff}
+.grid button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;height:88px;border-radius:16px;border:2px solid var(--pk);background:var(--card);color:var(--tx);font:600 1rem system-ui;cursor:pointer}
+.grid button span{font-size:1.9rem}.grid button:active{background:var(--pk)}
+.pick{display:grid;gap:12px;margin:16px 0}
+.pick button{display:flex;flex-direction:column;align-items:center;gap:4px;padding:22px 12px;border-radius:20px;border:2px solid var(--pk);background:var(--card);color:var(--tx);font:700 1.2rem system-ui;cursor:pointer}
+.pick button span{font-size:2.6rem}.pick button small{font:400 .82rem system-ui;color:var(--mut)}.pick button:active{background:var(--pk)}
 .row{display:flex;gap:8px;align-items:baseline;padding:7px 0;border-bottom:1px solid var(--bd);font-size:.92rem}
 .row .t{color:var(--mut);font-variant-numeric:tabular-nums;white-space:nowrap}.row .d{color:var(--mut);flex:1}
 .row button,.link{border:0;background:none;color:var(--mut);cursor:pointer;font:inherit}
 .exp{display:flex;gap:8px;flex-wrap:wrap}
-.exp button,#lgo{flex:1;padding:10px;border-radius:12px;border:1px solid var(--ac);background:none;color:var(--ac);font:600 .95rem system-ui;cursor:pointer}
-#lgo{background:var(--ac);color:#fff;width:100%;margin-top:8px}
+.exp button{flex:1;padding:10px;border-radius:12px;border:1.5px solid var(--pkd);background:none;color:var(--tx);font:600 .95rem system-ui;cursor:pointer}
+.exp button:active{background:var(--pk)}
+#lgo{width:100%;margin-top:8px;padding:10px;border-radius:12px;border:1.5px solid var(--pkd);background:var(--pk);color:var(--tx);font:600 .95rem system-ui;cursor:pointer}
 #login input{width:100%;box-sizing:border-box;margin-top:8px}
-#toast{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));max-width:496px;margin:0 auto;background:var(--card);border:1px solid var(--ac);border-radius:14px;padding:10px;box-shadow:0 4px 18px rgba(0,0,0,.2)}
+#toast{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));max-width:496px;margin:0 auto;background:var(--card);border:1.5px solid var(--pkd);border-radius:14px;padding:10px;box-shadow:0 4px 18px rgba(74,47,56,.18)}
 #toast div{display:flex;gap:6px;margin-top:6px}#toast input{flex:1;min-width:0}
 #toast button{border:0;border-radius:10px;padding:6px 12px;font:600 .9rem system-ui;cursor:pointer}
-#tsave{background:var(--ac);color:#fff}#tundo{background:var(--bd);color:var(--tx)}
+#tsave{background:var(--pk);color:var(--tx)}#tundo{background:var(--bd);color:var(--tx)}
 </style></head><body><div class="wrap">
-<header><h1>🍼 Catatan Bayi</h1><span><label class="note">Saya: <select id="who"><option>Ayah</option><option>Ibu</option></select></label> <button class="link" id="out" hidden>Keluar</button></span></header>
+<header><h1 id="ttl">📒 Catatan Keluarga</h1><span><label class="note">Saya: <select id="who"><option>Ayah</option><option>Ibu</option></select></label> <button class="link" id="back" hidden>← Ganti</button> <button class="link" id="out" hidden>Keluar</button></span></header>
 <div id="st" class="note">Menghubungkan…</div>
 
 <div id="login" class="card" hidden>
@@ -40,7 +44,16 @@ select,input{font:inherit;color:var(--tx);background:var(--card);border:1px soli
   <button id="lgo">Masuk</button><div id="lerr" class="note"></div>
 </div>
 
+<div id="home" hidden>
+  <h2>Catatan untuk siapa?</h2>
+  <div class="pick">
+    <button data-s="anak"><span>🍼</span>Anak<small>Susu, popok, tidur, obat, suhu</small></button>
+    <button data-s="ibu"><span>🤱</span>Ibu<small>Pompa ASI, makan, minum, obat, tensi</small></button>
+  </div>
+</div>
+
 <div id="app" hidden>
+  <div id="hi" class="hi"></div>
   <div id="last" class="card"></div>
   <div id="grid" class="grid"></div>
   <div id="sum" class="card"></div>
@@ -53,37 +66,60 @@ select,input{font:inherit;color:var(--tx);background:var(--card);border:1px soli
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script src="config.js"></script>
 <script>
-const T={susu:['🍼','Susu','ml, mis. 120'],bak:['💧','BAK','catatan'],bab:['💩','BAB','warna / konsistensi'],tidur:['😴','Tidur','catatan'],bangun:['☀️','Bangun','catatan'],gumoh:['🤮','Gumoh','catatan'],obat:['💊','Obat','nama & dosis'],suhu:['🌡️','Suhu','°C, mis. 36.8'],mandi:['🛁','Mandi','catatan']};
+const T={susu:['🍼','Susu','ml, mis. 120'],bak:['💧','BAK','catatan'],bab:['💩','BAB','warna / konsistensi'],tidur:['😴','Tidur','catatan'],bangun:['☀️','Bangun','catatan'],gumoh:['🤮','Gumoh','catatan'],obat:['💊','Obat','nama & dosis'],suhu:['🌡️','Suhu','°C, mis. 36.8'],mandi:['🛁','Mandi','catatan'],
+  pompa:['🥛','Pompa ASI','ml, mis. 100'],makan:['🍽️','Makan','menu'],minum:['🚰','Minum','ml, mis. 250'],tensi:['🩺','Tensi','mis. 120/80'],bb:['⚖️','Berat','kg, mis. 58.5'],keluhan:['📝','Keluhan','catatan'],olahraga:['🚶','Jalan/senam','menit / catatan']};
+const U={susu:' ml',pompa:' ml',minum:' ml',suhu:' °C',bb:' kg'};
+const BTN={anak:['susu','bak','bab','SLEEP','gumoh','obat','suhu','mandi'],ibu:['pompa','makan','minum','SLEEP','obat','tensi','bb','suhu','keluhan','olahraga']};
+const LAST={anak:['susu','bak','bab'],ibu:['pompa','makan','minum','obat']};
+const NAMA={anak:'Anak',ibu:'Ibu'};
+const GREET={anak:'Hai Adik Ziva, bagaimana hari ini?',ibu:'Hai Ibun Efri, bagaimana hari ini?'};
 const $=id=>document.getElementById(id),p=n=>String(n).padStart(2,'0'),D=t=>new Date(t);
 const ymd=t=>{const d=D(t);return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())};
 const hms=t=>{const d=D(t);return p(d.getHours())+':'+p(d.getMinutes())+':'+p(d.getSeconds())};
 const dur=m=>m<60?m+' m':Math.floor(m/60)+' j '+p(m%60)+' m';
 const ago=t=>{const m=Math.max(0,Math.round((Date.now()-t)/60000));return m<1?'baru saja':dur(m)+' lalu'};
 const setSt=s=>{$('st').textContent=s};
-const map=r=>({id:r.id,ts:new Date(r.ts).getTime(),type:r.type,d:r.detail||'',mn:r.minutes||0,by:r.by_name||''});
-let rows=[],who='Ayah',tt,ch=null,started=false,sb=null;
+const map=r=>({id:r.id,ts:new Date(r.ts).getTime(),type:r.type,d:r.detail||'',mn:r.minutes||0,by:r.by_name||'',sub:r.subject||'anak'});
+let rows=[],who='Ayah',tt,ch=null,started=false,sb=null,authed=false,subj=null;
 try{who=localStorage.getItem('who')||'Ayah'}catch(e){}
 $('who').value=who;$('who').onchange=e=>{who=e.target.value;try{localStorage.setItem('who',who)}catch(x){}};
 try{if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js')}catch(e){}
 
-const sleeping=()=>{const s=rows.find(r=>r.type==='tidur'||r.type==='bangun');return s&&s.type==='tidur'?s:null};
-function sumFor(l){const s={susu:0,ml:0,bak:0,bab:0,gumoh:0,mn:0};for(const r of l){if(r.type==='susu'){s.susu++;const m=/(\d+)\s*ml/.exec(r.d||'');if(m)s.ml+=+m[1]}else if(r.type==='bak'||r.type==='bab'||r.type==='gumoh')s[r.type]++;if(r.mn)s.mn+=r.mn}return s}
+const mine=()=>rows.filter(r=>r.sub===subj);
+const sleeping=()=>{const s=mine().find(r=>r.type==='tidur'||r.type==='bangun');return s&&s.type==='tidur'?s:null};
+function sumFor(l){
+  const s={susu:0,ml:0,bak:0,bab:0,gumoh:0,mn:0,pompa:0,pml:0,minum:0,makan:0,obat:0};
+  const ml=r=>{const m=/(\d+)\s*ml/.exec(r.d||'');return m?+m[1]:0};
+  for(const r of l){const t=r.type;
+    if(t==='susu'){s.susu++;s.ml+=ml(r)}else if(t==='pompa'){s.pompa++;s.pml+=ml(r)}else if(t==='minum'){s.minum+=ml(r)}
+    else if(['bak','bab','gumoh','makan','obat'].includes(t))s[t]++;
+    if(r.mn)s.mn+=r.mn}
+  return s}
 function upsert(raw){const r=map(raw),i=rows.findIndex(x=>x.id===r.id);if(i>=0)rows[i]=r;else rows.push(r);rows.sort((a,b)=>b.ts-a.ts)}
 
+function route(){
+  $('login').hidden=authed;$('home').hidden=!(authed&&!subj);$('app').hidden=!(authed&&subj);
+  $('out').hidden=!authed;$('back').hidden=!(authed&&subj);
+  $('ttl').textContent=subj==='ibu'?'🤱 Catatan Ibu':subj==='anak'?'🍼 Catatan Anak':'📒 Catatan Keluarga';
+  $('toast').hidden=true;$('hi').textContent=GREET[subj]||'';if(authed&&subj)render();
+}
 function render(){
-  const sl=sleeping(),g=$('grid');g.textContent='';
-  for(const k of ['susu','bak','bab',sl?'bangun':'tidur','gumoh','obat','suhu','mandi']){
+  if(!subj)return;
+  const V=mine(),sl=sleeping(),g=$('grid');g.textContent='';
+  for(const k0 of BTN[subj]){const k=k0==='SLEEP'?(sl?'bangun':'tidur'):k0;
     const b=document.createElement('button'),e=document.createElement('span');
     e.textContent=T[k][0];b.append(e,T[k][1]);b.onclick=()=>tap(k);g.append(b)}
   const L=$('last');L.textContent='';
-  const lines=['susu','bak','bab'].map(k=>{const r=rows.find(x=>x.type===k);return T[k][1]+' terakhir: '+(r?hms(r.ts).slice(0,5)+' ('+ago(r.ts)+')':'-')});
+  const lines=LAST[subj].map(k=>{const r=V.find(x=>x.type===k);return T[k][1]+' terakhir: '+(r?hms(r.ts).slice(0,5)+' ('+ago(r.ts)+')':'-')});
   if(sl)lines.unshift('😴 Sedang tidur sejak '+hms(sl.ts).slice(0,5)+' ('+ago(sl.ts).replace(' lalu','')+')');
   for(const t of lines){const d=document.createElement('div');d.textContent=t;L.append(d)}
-  const st=new Date();st.setHours(0,0,0,0);const z=sumFor(rows.filter(r=>r.ts>=st.getTime()));
-  $('sum').textContent='Hari ini: Susu '+z.susu+'× ('+z.ml+' ml) · BAK '+z.bak+'× · BAB '+z.bab+'× · Gumoh '+z.gumoh+'× · Tidur '+dur(z.mn);
-  const H=$('hist');H.textContent='';
-  if(!rows.length){H.textContent='Belum ada catatan. Tekan salah satu tombol di atas.';H.className='note'}
-  for(const r of rows.slice(0,40)){
+  const st=new Date();st.setHours(0,0,0,0);const z=sumFor(V.filter(r=>r.ts>=st.getTime()));
+  $('sum').textContent=subj==='anak'
+    ?'Hari ini: Susu '+z.susu+'× ('+z.ml+' ml) · BAK '+z.bak+'× · BAB '+z.bab+'× · Gumoh '+z.gumoh+'× · Tidur '+dur(z.mn)
+    :'Hari ini: Pompa '+z.pompa+'× ('+z.pml+' ml) · Minum '+z.minum+' ml · Makan '+z.makan+'× · Obat '+z.obat+'× · Tidur '+dur(z.mn);
+  const H=$('hist');H.textContent='';H.className='';
+  if(!V.length){H.textContent='Belum ada catatan. Tekan salah satu tombol di atas.';H.className='note'}
+  for(const r of V.slice(0,40)){
     const w=document.createElement('div');w.className='row';
     const t=document.createElement('span');t.className='t';
     t.textContent=(ymd(r.ts)===ymd(Date.now())?'':p(D(r.ts).getDate())+'/'+p(D(r.ts).getMonth()+1)+' ')+hms(r.ts);
@@ -96,7 +132,7 @@ function render(){
 async function del(id){const{error}=await sb.from('activities').delete().eq('id',id);if(error)return setSt('Gagal menghapus: '+error.message);rows=rows.filter(r=>r.id!==id);render()}
 async function upd(id,detail){const{data,error}=await sb.from('activities').update({detail}).eq('id',id).select().single();if(error)return setSt('Gagal menyimpan detail: '+error.message);upsert(data);render()}
 async function tap(k){
-  const ts=Date.now(),rec={ts:new Date(ts).toISOString(),type:k,detail:'',minutes:null,by_name:who};
+  const ts=Date.now(),rec={ts:new Date(ts).toISOString(),type:k,detail:'',minutes:null,by_name:who,subject:subj};
   if(k==='bangun'){const s=sleeping();if(s){rec.minutes=Math.round((ts-s.ts)/60000);rec.detail='tidur '+dur(rec.minutes)}}
   const{data,error}=await sb.from('activities').insert(rec).select().single();
   if(error)return setSt('Gagal menyimpan: '+error.message);
@@ -105,24 +141,28 @@ async function tap(k){
 function showToast(id,k,rec){
   const t=$('toast'),i=$('tin');t.hidden=false;i.value='';i.placeholder=T[k][2];
   $('tmsg').textContent='Tercatat: '+T[k][1]+' '+hms(rec.ts)+' (detail opsional)';
-  $('tsave').onclick=async()=>{let v=i.value.trim();if(v){if(k==='susu'&&/^\d+$/.test(v))v+=' ml';if(k==='suhu'&&/^[\d.,]+$/.test(v))v+=' °C';await upd(id,rec.d?rec.d+'; '+v:v)}t.hidden=true};
+  $('tsave').onclick=async()=>{let v=i.value.trim();if(v){if(U[k]&&/^[\d.,]+$/.test(v))v+=U[k];await upd(id,rec.d?rec.d+'; '+v:v)}t.hidden=true};
   $('tundo').onclick=()=>{del(id);t.hidden=true};
   clearTimeout(tt);tt=setTimeout(()=>{if(document.activeElement!==i)t.hidden=true},12000);
 }
 function exp(r){
   const n=new Date(),s=new Date(n.getFullYear(),n.getMonth(),n.getDate());
   if(r==='w')s.setDate(s.getDate()-6);if(r==='m')s.setDate(1);
-  const l=rows.filter(x=>x.ts>=s.getTime()).sort((a,b)=>a.ts-b.ts);
+  const l=mine().filter(x=>x.ts>=s.getTime()).sort((a,b)=>a.ts-b.ts);
   const q=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"';
   let c='Tanggal,Jam,Aktivitas,Detail,Dicatat oleh\n'+l.map(x=>[ymd(x.ts),hms(x.ts),T[x.type]?T[x.type][1]:x.type,x.d,x.by].map(q).join(',')).join('\n');
   const days=[...new Set(l.map(x=>ymd(x.ts)))];
-  c+='\n\nRekap harian\nTanggal,Susu (x),Susu (ml),BAK (x),BAB (x),Gumoh (x),Tidur (menit)\n'+days.map(d=>{const z=sumFor(l.filter(x=>ymd(x.ts)===d));return [d,z.susu,z.ml,z.bak,z.bab,z.gumoh,z.mn].join(',')}).join('\n');
+  const head=subj==='anak'?'Tanggal,Susu (x),Susu (ml),BAK (x),BAB (x),Gumoh (x),Tidur (menit)':'Tanggal,Pompa (x),Pompa (ml),Minum (ml),Makan (x),Obat (x),Tidur (menit)';
+  c+='\n\nRekap harian ('+NAMA[subj]+')\n'+head+'\n'+days.map(d=>{const z=sumFor(l.filter(x=>ymd(x.ts)===d));
+    return (subj==='anak'?[d,z.susu,z.ml,z.bak,z.bab,z.gumoh,z.mn]:[d,z.pompa,z.pml,z.minum,z.makan,z.obat,z.mn]).join(',')}).join('\n');
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob(['\ufeff'+c],{type:'text/csv;charset=utf-8'}));
-  a.download='rekap-bayi-'+{d:'harian',w:'mingguan',m:'bulanan'}[r]+'-'+ymd(Date.now())+'.csv';
+  a.download='rekap-'+subj+'-'+{d:'harian',w:'mingguan',m:'bulanan'}[r]+'-'+ymd(Date.now())+'.csv';
   document.body.append(a);a.click();a.remove();
 }
 document.querySelectorAll('.exp button').forEach(b=>b.onclick=()=>exp(b.dataset.r));
+document.querySelectorAll('.pick button').forEach(b=>b.onclick=()=>{subj=b.dataset.s;route()});
+$('back').onclick=()=>{subj=null;route()};
 
 async function load(){
   const{data,error}=await sb.from('activities').select('*').order('ts',{ascending:false}).limit(3000);
@@ -134,7 +174,6 @@ function start(){
   if(!ch)ch=sb.channel('act').on('postgres_changes',{event:'*',schema:'public',table:'activities'},pl=>{
     if(pl.eventType==='DELETE')rows=rows.filter(r=>r.id!==pl.old.id);else upsert(pl.new);render()}).subscribe();
 }
-function show(inn){$('login').hidden=inn;$('app').hidden=!inn;$('out').hidden=!inn}
 $('lgo').onclick=async()=>{
   $('lerr').textContent='';
   const{error}=await sb.auth.signInWithPassword({email:$('em').value.trim(),password:$('pw').value});
@@ -149,8 +188,8 @@ try{
   if(!c.url||!c.key||c.url.startsWith('ISI_'))throw new Error('config.js belum diisi (URL dan key Supabase).');
   sb=supabase.createClient(c.url,c.key);
   sb.auth.onAuthStateChange((ev,sess)=>{
-    if(sess){show(true);if(!started){started=true;setTimeout(start,0)}}
-    else{started=false;if(ch){sb.removeChannel(ch);ch=null}rows=[];show(false);setSt('Silakan masuk.')}
+    if(sess){authed=true;route();if(!started){started=true;setTimeout(start,0)}}
+    else{authed=false;subj=null;started=false;if(ch){sb.removeChannel(ch);ch=null}rows=[];route();setSt('Silakan masuk.')}
   });
 }catch(e){setSt(e.message)}
 </script></body></html>
