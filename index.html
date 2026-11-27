@@ -24,16 +24,25 @@ select,input{font:inherit;color:var(--tx);background:var(--card);border:1px soli
 .pick button span{font-size:2.6rem}.pick button small{font:400 .82rem system-ui;color:var(--mut)}.pick button:active{background:var(--pk)}
 .row{display:flex;gap:8px;align-items:baseline;padding:7px 0;border-bottom:1px solid var(--bd);font-size:.92rem}
 .row .t{color:var(--mut);font-variant-numeric:tabular-nums;white-space:nowrap}.row .d{color:var(--mut);flex:1}
-.row button,.link{border:0;background:none;color:var(--mut);cursor:pointer;font:inherit}
+.row button,.link{border:0;background:none;color:var(--mut);cursor:pointer;font:inherit;padding:2px 4px}
+.row button:hover{color:var(--tx)}
 .exp{display:flex;gap:8px;flex-wrap:wrap}
 .exp button{flex:1;padding:10px;border-radius:12px;border:1.5px solid var(--pkd);background:none;color:var(--tx);font:600 .95rem system-ui;cursor:pointer}
 .exp button:active{background:var(--pk)}
 #lgo{width:100%;margin-top:8px;padding:10px;border-radius:12px;border:1.5px solid var(--pkd);background:var(--pk);color:var(--tx);font:600 .95rem system-ui;cursor:pointer}
 #login input{width:100%;box-sizing:border-box;margin-top:8px}
-#toast{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));max-width:496px;margin:0 auto;background:var(--card);border:1.5px solid var(--pkd);border-radius:14px;padding:10px;box-shadow:0 4px 18px rgba(74,47,56,.18)}
-#toast div{display:flex;gap:6px;margin-top:6px}#toast input{flex:1;min-width:0}
-#toast button{border:0;border-radius:10px;padding:6px 12px;font:600 .9rem system-ui;cursor:pointer}
+#toast{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));max-width:496px;margin:0 auto;background:var(--card);border:1.5px solid var(--pkd);border-radius:14px;padding:12px;box-shadow:0 4px 18px rgba(74,47,56,.18);z-index:10}
+#toast .trow{display:flex;gap:6px;margin-top:6px}#toast input{flex:1;min-width:0}
+#toast button{border:0;border-radius:10px;padding:7px 12px;font:600 .9rem system-ui;cursor:pointer}
 #tsave{background:var(--pk);color:var(--tx)}#tundo{background:var(--bd);color:var(--tx)}
+.modal{position:fixed;inset:0;background:rgba(74,47,56,.45);display:flex;align-items:center;justify-content:center;padding:14px;z-index:20}
+.mbox{background:var(--card);border:1.5px solid var(--pkd);border-radius:18px;padding:16px;width:100%;max-width:420px;box-shadow:0 8px 28px rgba(74,47,56,.25)}
+.mbox h3{margin:0 0 12px;font-size:1.1rem}
+.mbox label{display:block;font-size:.85rem;color:var(--mut);margin:10px 0 4px}
+.mbox input,.mbox select{width:100%;box-sizing:border-box}
+.mact{display:flex;gap:8px;margin-top:16px}
+.mact button{flex:1;border:0;border-radius:12px;padding:10px;font:600 .95rem system-ui;cursor:pointer}
+#esave{background:var(--pk);color:var(--tx)}#ecancel{background:var(--bd);color:var(--tx)}
 </style></head><body><div class="wrap">
 <header><h1 id="ttl">📒 Catatan Keluarga</h1><span><label class="note">Saya: <select id="who"><option>Ayah</option><option>Ibu</option></select></label> <button class="link" id="back" hidden>← Ganti</button> <button class="link" id="out" hidden>Keluar</button></span></header>
 <div id="st" class="note">Menghubungkan…</div>
@@ -62,7 +71,32 @@ select,input{font:inherit;color:var(--tx);background:var(--card);border:1px soli
   <h2>Unduh rekap (CSV)</h2>
   <div class="exp"><button data-r="d">Hari ini</button><button data-r="w">7 hari</button><button data-r="m">Bulan ini</button></div>
 </div></div>
-<div id="toast" hidden><span id="tmsg"></span><div><input id="tin"><button id="tsave">Simpan</button><button id="tundo">Batal</button></div></div>
+
+<!-- Toast pencatatan cepat + ubah waktu -->
+<div id="toast" hidden>
+  <span id="tmsg" style="font-weight:600;font-size:.92rem"></span>
+  <div class="trow"><input id="tts" type="datetime-local" title="Ubah waktu kejadian"></div>
+  <div class="trow"><input id="tin"><button id="tsave">Simpan</button><button id="tundo">Batal</button></div>
+</div>
+
+<!-- Modal edit log riwayat -->
+<div id="emod" class="modal" hidden>
+  <div class="mbox">
+    <h3>✏️ Edit Catatan</h3>
+    <label for="etype">Aktivitas</label>
+    <select id="etype"></select>
+    <label for="ets">Waktu Kejadian</label>
+    <input id="ets" type="datetime-local">
+    <label for="edet">Detail / Catatan</label>
+    <input id="edet" type="text" placeholder="Contoh: 120 ml">
+    <label for="eby">Dicatat oleh</label>
+    <select id="eby"><option>Ayah</option><option>Ibu</option></select>
+    <div class="mact">
+      <button id="ecancel">Batal</button>
+      <button id="esave">Simpan Perubahan</button>
+    </div>
+  </div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script src="config.js"></script>
@@ -77,11 +111,13 @@ const GREET={anak:'Hai Adik Ziva, bagaimana hari ini?',ibu:'Hai Ibun Efri, bagai
 const $=id=>document.getElementById(id),p=n=>String(n).padStart(2,'0'),D=t=>new Date(t);
 const ymd=t=>{const d=D(t);return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())};
 const hms=t=>{const d=D(t);return p(d.getHours())+':'+p(d.getMinutes())+':'+p(d.getSeconds())};
+const toLocalInput=t=>{const d=D(t);return ymd(t)+'T'+p(d.getHours())+':'+p(d.getMinutes())};
+const fromLocalInput=val=>{const d=new Date(val);return isNaN(d.getTime())?null:d.toISOString()};
 const dur=m=>m<60?m+' m':Math.floor(m/60)+' j '+p(m%60)+' m';
 const ago=t=>{const m=Math.max(0,Math.round((Date.now()-t)/60000));return m<1?'baru saja':dur(m)+' lalu'};
 const setSt=s=>{$('st').textContent=s};
 const map=r=>({id:r.id,ts:new Date(r.ts).getTime(),type:r.type,d:r.detail||'',mn:r.minutes||0,by:r.by_name||'',sub:r.subject||'anak'});
-let rows=[],who='Ayah',tt,ch=null,started=false,sb=null,authed=false,subj=null;
+let rows=[],who='Ayah',tt,ch=null,started=false,sb=null,authed=false,subj=null,editId=null;
 try{who=localStorage.getItem('who')||'Ayah'}catch(e){}
 $('who').value=who;$('who').onchange=e=>{who=e.target.value;try{localStorage.setItem('who',who)}catch(x){}};
 try{if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js')}catch(e){}
@@ -102,7 +138,7 @@ function route(){
   $('login').hidden=authed;$('home').hidden=!(authed&&!subj);$('app').hidden=!(authed&&subj);
   $('out').hidden=!authed;$('back').hidden=!(authed&&subj);
   $('ttl').textContent=subj==='ibu'?'🤱 Catatan Ibu':subj==='anak'?'🍼 Catatan Anak':'📒 Catatan Keluarga';
-  $('toast').hidden=true;$('hi').textContent=GREET[subj]||'';if(authed&&subj)render();
+  $('toast').hidden=true;$('emod').hidden=true;$('hi').textContent=GREET[subj]||'';if(authed&&subj)render();
 }
 function render(){
   if(!subj)return;
@@ -123,29 +159,92 @@ function render(){
   for(const r of V.slice(0,40)){
     const w=document.createElement('div');w.className='row';
     const t=document.createElement('span');t.className='t';
-    t.textContent=(ymd(r.ts)===ymd(Date.now())?'':p(D(r.ts).getDate())+'/'+p(D(r.ts).getMonth()+1)+' ')+hms(r.ts);
+    t.textContent=(ymd(r.ts)===ymd(Date.now())?'':p(D(r.ts).getDate())+'/'+p(D(r.ts).getMonth()+1)+' ')+hms(r.ts).slice(0,5);
     const n=T[r.type]||['',r.type],a=document.createElement('span');a.textContent=n[0]+' '+n[1];
     const d=document.createElement('span');d.className='d';d.textContent=[r.d,r.by].filter(Boolean).join(' · ');
-    const x=document.createElement('button');x.textContent='✕';
+    const ed=document.createElement('button');ed.textContent='✎';ed.title='Edit catatan';
+    ed.onclick=()=>openEdit(r);
+    const x=document.createElement('button');x.textContent='✕';x.title='Hapus catatan';
     x.onclick=()=>{if(x.dataset.c){del(r.id)}else{x.dataset.c=1;x.textContent='Hapus?';setTimeout(()=>{x.textContent='✕';delete x.dataset.c},3000)}};
-    w.append(t,a,d,x);H.append(w)}
+    w.append(t,a,d,ed,x);H.append(w)}
 }
 async function del(id){const{error}=await sb.from('activities').delete().eq('id',id);if(error)return setSt('Gagal menghapus: '+error.message);rows=rows.filter(r=>r.id!==id);render()}
-async function upd(id,detail){const{data,error}=await sb.from('activities').update({detail}).eq('id',id).select().single();if(error)return setSt('Gagal menyimpan detail: '+error.message);upsert(data);render()}
+async function upd(id,patch){const{data,error}=await sb.from('activities').update(patch).eq('id',id).select().single();if(error)return setSt('Gagal menyimpan perubahan: '+error.message);upsert(data);render()}
 async function tap(k){
   const ts=Date.now(),rec={ts:new Date(ts).toISOString(),type:k,detail:'',minutes:null,by_name:who,subject:subj};
-  if(k==='bangun'){const s=sleeping();if(s){rec.minutes=Math.round((ts-s.ts)/60000);rec.detail='tidur '+dur(rec.minutes)}}
+  if(k==='bangun'){const s=sleeping();if(s){rec.minutes=Math.max(0,Math.round((ts-s.ts)/60000));rec.detail='tidur '+dur(rec.minutes)}}
   const{data,error}=await sb.from('activities').insert(rec).select().single();
   if(error)return setSt('Gagal menyimpan: '+error.message);
   upsert(data);render();showToast(data.id,k,map(data));
 }
 function showToast(id,k,rec){
-  const t=$('toast'),i=$('tin');t.hidden=false;i.value='';i.placeholder=T[k][2];
-  $('tmsg').textContent='Tercatat: '+T[k][1]+' '+hms(rec.ts)+' (detail opsional)';
-  $('tsave').onclick=async()=>{let v=i.value.trim();if(v){if(U[k]&&/^[\d.,]+$/.test(v))v+=U[k];await upd(id,rec.d?rec.d+'; '+v:v)}t.hidden=true};
+  const t=$('toast'),i=$('tin'),dt=$('tts');
+  t.hidden=false;i.value='';i.placeholder=T[k][2];
+  dt.value=toLocalInput(rec.ts);
+  $('tmsg').textContent='Tercatat: '+T[k][1]+' (ubah waktu/detail jika perlu)';
+  $('tsave').onclick=async()=>{
+    const patch={};
+    let v=i.value.trim();
+    if(v){if(U[k]&&/^[\d.,]+$/.test(v))v+=U[k];patch.detail=rec.d?rec.d+'; '+v:v}
+    const newIso=fromLocalInput(dt.value);
+    if(newIso && dt.value!==toLocalInput(rec.ts)){
+      patch.ts=newIso;
+      // Hitung ulang durasi tidur jika aktivitasnya 'bangun'
+      if(k==='bangun'){
+        const prevTidur=mine().find(x=>x.type==='tidur' && x.ts<new Date(newIso).getTime());
+        if(prevTidur){
+          const mins=Math.max(0,Math.round((new Date(newIso).getTime()-prevTidur.ts)/60000));
+          patch.minutes=mins;
+          if(!v)patch.detail='tidur '+dur(mins);
+        }
+      }
+    }
+    if(Object.keys(patch).length)await upd(id,patch);
+    t.hidden=true;
+  };
   $('tundo').onclick=()=>{del(id);t.hidden=true};
-  clearTimeout(tt);tt=setTimeout(()=>{if(document.activeElement!==i)t.hidden=true},12000);
+  clearTimeout(tt);
+  tt=setTimeout(()=>{if(document.activeElement!==i && document.activeElement!==dt)t.hidden=true},18000);
 }
+function openEdit(r){
+  editId=r.id;
+  const sel=$('etype');sel.textContent='';
+  const keys=subj==='anak'?['asi','sufor','susu','bak','bab','tidur','bangun','gumoh','obat','suhu','mandi']:['pompa','makan','minum','tidur','bangun','obat','tensi','bb','suhu','keluhan','olahraga'];
+  for(const k of keys){
+    const opt=document.createElement('option');opt.value=k;opt.textContent=T[k][0]+' '+T[k][1];
+    sel.append(opt);
+  }
+  sel.value=r.type;
+  $('ets').value=toLocalInput(r.ts);
+  $('edet').value=r.d||'';
+  $('eby').value=r.by||'Ayah';
+  $('emod').hidden=false;
+}
+$('ecancel').onclick=()=>{$('emod').hidden=true;editId=null};
+$('emod').onclick=e=>{if(e.target===$('emod')){$('emod').hidden=true;editId=null}};
+$('esave').onclick=async()=>{
+  if(!editId)return;
+  const newIso=fromLocalInput($('ets').value);
+  if(!newIso)return alert('Format waktu tidak valid.');
+  const newType=$('etype').value;
+  let newDet=$('edet').value.trim();
+  if(U[newType]&&/^[\d.,]+$/.test(newDet))newDet+=U[newType];
+  const patch={
+    type:newType,
+    ts:newIso,
+    detail:newDet,
+    by_name:$('eby').value
+  };
+  if(newType==='bangun'){
+    const prevTidur=mine().find(x=>x.type==='tidur' && x.id!==editId && x.ts<new Date(newIso).getTime());
+    if(prevTidur){
+      patch.minutes=Math.max(0,Math.round((new Date(newIso).getTime()-prevTidur.ts)/60000));
+    }
+  }
+  await upd(editId,patch);
+  $('emod').hidden=true;
+  editId=null;
+};
 function exp(r){
   const n=new Date(),s=new Date(n.getFullYear(),n.getMonth(),n.getDate());
   if(r==='w')s.setDate(s.getDate()-6);if(r==='m')s.setDate(1);
