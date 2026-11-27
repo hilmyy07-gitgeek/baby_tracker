@@ -22,20 +22,48 @@ select,input{font:inherit;color:var(--tx);background:var(--card);border:1px soli
 .pick{display:grid;gap:12px;margin:16px 0}
 .pick button{display:flex;flex-direction:column;align-items:center;gap:4px;padding:22px 12px;border-radius:20px;border:2px solid var(--pk);background:var(--card);color:var(--tx);font:700 1.2rem system-ui;cursor:pointer}
 .pick button span{font-size:2.6rem}.pick button small{font:400 .82rem system-ui;color:var(--mut)}.pick button:active{background:var(--pk)}
-.row{display:flex;gap:8px;align-items:baseline;padding:7px 0;border-bottom:1px solid var(--bd);font-size:.92rem}
+.row{display:flex;gap:8px;align-items:baseline;padding:9px 0;border-bottom:1px solid var(--bd);font-size:.92rem}
 .row .t{color:var(--mut);font-variant-numeric:tabular-nums;white-space:nowrap}.row .d{color:var(--mut);flex:1}
-.row button,.link{border:0;background:none;color:var(--mut);cursor:pointer;font:inherit;padding:2px 4px}
+.row button,.link{border:0;background:none;color:var(--mut);cursor:pointer;font:inherit;padding:2px 5px}
 .row button:hover{color:var(--tx)}
 .exp{display:flex;gap:8px;flex-wrap:wrap}
 .exp button{flex:1;padding:10px;border-radius:12px;border:1.5px solid var(--pkd);background:none;color:var(--tx);font:600 .95rem system-ui;cursor:pointer}
 .exp button:active{background:var(--pk)}
 #lgo{width:100%;margin-top:8px;padding:10px;border-radius:12px;border:1.5px solid var(--pkd);background:var(--pk);color:var(--tx);font:600 .95rem system-ui;cursor:pointer}
 #login input{width:100%;box-sizing:border-box;margin-top:8px}
-#toast{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));max-width:496px;margin:0 auto;background:var(--card);border:1.5px solid var(--pkd);border-radius:14px;padding:12px;box-shadow:0 4px 18px rgba(74,47,56,.18);z-index:10}
+
+/* Kartu Jam Analog 12 Jam */
+.clk-card{background:var(--card);border:1.5px solid var(--bd);border-radius:20px;padding:14px;margin:14px 0;transition:background .3s,color .3s,border-color .3s}
+.clk-card.night{background:#262135;color:#FAF3EB;border-color:#423A5C}
+.clk-top{display:flex;justify-content:space-between;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.clk-nav{display:flex;align-items:center;gap:4px}
+.clk-nav button,.clk-tog button,.clk-now{border:1px solid var(--bd);background:rgba(255,255,255,.15);color:inherit;border-radius:10px;padding:5px 9px;font:600 .82rem system-ui;cursor:pointer}
+.clk-card.night .clk-nav button,.clk-card.night .clk-tog button,.clk-card.night .clk-now{border-color:#4A4166}
+.clk-tog{display:flex;gap:4px}
+.clk-tog button.act{background:var(--pk);color:#4A2F38;border-color:var(--pkd)}
+.clk-card.night .clk-tog button.act{background:#8A79B8;color:#FFF;border-color:#B5A6E0}
+.clk-now{background:var(--pkd)!important;color:#FFF!important;border:0!important}
+.clk-wrap{position:relative;max-width:320px;margin:4px auto;cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none}
+.clk-wrap svg{width:100%;height:auto;display:block;overflow:visible}
+.clk-hint{text-align:center;font-size:.84rem;opacity:.85;margin-top:6px;cursor:pointer;text-decoration:underline;text-decoration-style:dotted}
+
+/* Toast pencatatan cepat */
+#toast{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));max-width:496px;margin:0 auto;background:var(--card);border:1.5px solid var(--pkd);border-radius:14px;padding:12px;box-shadow:0 4px 18px rgba(74,47,56,.18);z-index:15}
 #toast .trow{display:flex;gap:6px;margin-top:6px}#toast input{flex:1;min-width:0}
 #toast button{border:0;border-radius:10px;padding:7px 12px;font:600 .9rem system-ui;cursor:pointer}
 #tsave{background:var(--pk);color:var(--tx)}#tundo{background:var(--bd);color:var(--tx)}
-.modal{position:fixed;inset:0;background:rgba(74,47,56,.45);display:flex;align-items:center;justify-content:center;padding:14px;z-index:20}
+
+/* Bottom Sheet Riwayat & Modal Edit */
+.sheet-bg{position:fixed;inset:0;background:rgba(74,47,56,.48);display:flex;align-items:flex-end;justify-content:center;z-index:25}
+.sheet{background:var(--card);border-top:2px solid var(--pkd);border-radius:22px 22px 0 0;width:100%;max-width:520px;max-height:80vh;display:flex;flex-direction:column;padding:14px 16px calc(16px + env(safe-area-inset-bottom,0px));box-shadow:0 -8px 28px rgba(74,47,56,.25)}
+.sh-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.sh-head h3{margin:0;font-size:1.05rem}
+.sh-tabs{display:flex;gap:6px;margin-bottom:10px}
+.sh-tabs button{flex:1;padding:7px 10px;border-radius:10px;border:1px solid var(--bd);background:none;color:var(--mut);font:600 .85rem system-ui;cursor:pointer}
+.sh-tabs button.act{background:var(--pk);color:var(--tx);border-color:var(--pkd)}
+.sh-body{overflow-y:auto;flex:1;padding-right:2px}
+
+.modal{position:fixed;inset:0;background:rgba(74,47,56,.5);display:flex;align-items:center;justify-content:center;padding:14px;z-index:35}
 .mbox{background:var(--card);border:1.5px solid var(--pkd);border-radius:18px;padding:16px;width:100%;max-width:420px;box-shadow:0 8px 28px rgba(74,47,56,.25)}
 .mbox h3{margin:0 0 12px;font-size:1.1rem}
 .mbox label{display:block;font-size:.85rem;color:var(--mut);margin:10px 0 4px}
@@ -67,7 +95,27 @@ select,input{font:inherit;color:var(--tx);background:var(--card);border:1px soli
   <div id="last" class="card"></div>
   <div id="grid" class="grid"></div>
   <div id="sum" class="card"></div>
-  <h2>Riwayat terbaru</h2><div id="hist"></div>
+
+  <h2>Jam Aktivitas (12 Jam)</h2>
+  <div id="clkCard" class="clk-card">
+    <div class="clk-top">
+      <div class="clk-nav">
+        <button id="prevDay" title="Hari sebelumnya">‹</button>
+        <span id="clkDate" style="font-weight:700;font-size:.88rem;padding:0 4px">Hari ini</span>
+        <button id="nextDay" title="Hari berikutnya">›</button>
+      </div>
+      <div class="clk-tog">
+        <button id="btnNight" data-per="night">🌙 00–12</button>
+        <button id="btnDay" data-per="day">☀️ 12–24</button>
+        <button id="btnNow" class="clk-now" hidden>Sekarang</button>
+      </div>
+    </div>
+    <div id="clkWrap" class="clk-wrap" title="Ketuk untuk membuka riwayat">
+      <svg id="clkSvg" viewBox="0 0 320 320"></svg>
+    </div>
+    <div id="clkHint" class="clk-hint">Ketuk jam untuk lihat & edit riwayat</div>
+  </div>
+
   <h2>Unduh rekap (CSV)</h2>
   <div class="exp"><button data-r="d">Hari ini</button><button data-r="w">7 hari</button><button data-r="m">Bulan ini</button></div>
 </div></div>
@@ -77,6 +125,21 @@ select,input{font:inherit;color:var(--tx);background:var(--card);border:1px soli
   <span id="tmsg" style="font-weight:600;font-size:.92rem"></span>
   <div class="trow"><input id="tts" type="datetime-local" title="Ubah waktu kejadian"></div>
   <div class="trow"><input id="tin"><button id="tsave">Simpan</button><button id="tundo">Batal</button></div>
+</div>
+
+<!-- Bottom Sheet Riwayat -->
+<div id="hmod" class="sheet-bg" hidden>
+  <div class="sheet">
+    <div class="sh-head">
+      <h3 id="htitle">📋 Riwayat Aktivitas</h3>
+      <button class="link" id="hclose" style="font-size:1.1rem;font-weight:700">✕</button>
+    </div>
+    <div class="sh-tabs">
+      <button id="tabSess" class="act">Sesi Ini</button>
+      <button id="tabAll">Semua Riwayat</button>
+    </div>
+    <div id="hist" class="sh-body"></div>
+  </div>
 </div>
 
 <!-- Modal edit log riwayat -->
@@ -117,7 +180,10 @@ const dur=m=>m<60?m+' m':Math.floor(m/60)+' j '+p(m%60)+' m';
 const ago=t=>{const m=Math.max(0,Math.round((Date.now()-t)/60000));return m<1?'baru saja':dur(m)+' lalu'};
 const setSt=s=>{$('st').textContent=s};
 const map=r=>({id:r.id,ts:new Date(r.ts).getTime(),type:r.type,d:r.detail||'',mn:r.minutes||0,by:r.by_name||'',sub:r.subject||'anak'});
+
 let rows=[],who='Ayah',tt,ch=null,started=false,sb=null,authed=false,subj=null,editId=null;
+let clkDayOffset=0,clkPeriod=new Date().getHours()<12?'night':'day',clkManual=false,histTab='sess';
+
 try{who=localStorage.getItem('who')||'Ayah'}catch(e){}
 $('who').value=who;$('who').onchange=e=>{who=e.target.value;try{localStorage.setItem('who',who)}catch(x){}};
 try{if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js')}catch(e){}
@@ -134,14 +200,36 @@ function sumFor(l){
   return s}
 function upsert(raw){const r=map(raw),i=rows.findIndex(x=>x.id===r.id);if(i>=0)rows[i]=r;else rows.push(r);rows.sort((a,b)=>b.ts-a.ts)}
 
+function syncClockState(){
+  if(!clkManual){
+    clkDayOffset=0;
+    clkPeriod=new Date().getHours()<12?'night':'day';
+  }
+}
+function getSessionWindow(){
+  const base=new Date();
+  base.setHours(0,0,0,0);
+  base.setDate(base.getDate()+clkDayOffset);
+  const start=new Date(base);
+  if(clkPeriod==='day')start.setHours(12,0,0,0);
+  const end=new Date(start.getTime()+12*3600000);
+  const now=Date.now();
+  const isLive=(now>=start.getTime() && now<end.getTime());
+  return {start:start.getTime(),end:end.getTime(),isLive,base};
+}
+
 function route(){
   $('login').hidden=authed;$('home').hidden=!(authed&&!subj);$('app').hidden=!(authed&&subj);
   $('out').hidden=!authed;$('back').hidden=!(authed&&subj);
   $('ttl').textContent=subj==='ibu'?'🤱 Catatan Ibu':subj==='anak'?'🍼 Catatan Anak':'📒 Catatan Keluarga';
-  $('toast').hidden=true;$('emod').hidden=true;$('hi').textContent=GREET[subj]||'';if(authed&&subj)render();
+  $('toast').hidden=true;$('emod').hidden=true;$('hmod').hidden=true;
+  $('hi').textContent=GREET[subj]||'';
+  if(authed&&subj){syncClockState();render();}
 }
+
 function render(){
   if(!subj)return;
+  syncClockState();
   const V=mine(),sl=sleeping(),g=$('grid');g.textContent='';
   for(const k0 of BTN[subj]){const k=k0==='SLEEP'?(sl?'bangun':'tidur'):k0;
     const b=document.createElement('button'),e=document.createElement('span');
@@ -154,9 +242,153 @@ function render(){
   $('sum').textContent=subj==='anak'
     ?'Hari ini: Susu '+z.susu+'× ('+z.ml+' ml; ASI '+z.asi+'×, Sufor '+z.sufor+'×) · BAK '+z.bak+'× · BAB '+z.bab+'× · Gumoh '+z.gumoh+'× · Tidur '+dur(z.mn)
     :'Hari ini: Pompa '+z.pompa+'× ('+z.pml+' ml) · Minum '+z.minum+' ml · Makan '+z.makan+'× · Obat '+z.obat+'× · Tidur '+dur(z.mn);
-  const H=$('hist');H.textContent='';H.className='';
-  if(!V.length){H.textContent='Belum ada catatan. Tekan salah satu tombol di atas.';H.className='note'}
-  for(const r of V.slice(0,40)){
+
+  renderClock(V);
+  if(!$('hmod').hidden)renderHist();
+}
+
+function renderClock(V){
+  const win=getSessionWindow();
+  const isNight=clkPeriod==='night';
+  const card=$('clkCard');
+  card.classList.toggle('night',isNight);
+  $('btnNight').classList.toggle('act',isNight);
+  $('btnDay').classList.toggle('act',!isNight);
+  $('btnNow').hidden=win.isLive;
+
+  if(clkDayOffset===0)$('clkDate').textContent='Hari ini';
+  else if(clkDayOffset===-1)$('clkDate').textContent='Kemarin';
+  else $('clkDate').textContent=p(win.base.getDate())+'/'+p(win.base.getMonth()+1);
+
+  const sessItems=V.filter(r=>r.ts>=win.start && r.ts<win.end).sort((a,b)=>a.ts-b.ts);
+  $('clkHint').textContent='Ketuk jam untuk lihat & edit riwayat ('+sessItems.length+' catatan di sesi ini)';
+
+  const svg=$('clkSvg');
+  const ns='http://www.w3.org/2000/svg';
+  svg.textContent='';
+  const el=(tag,attrs)=>{const n=document.createElementNS(ns,tag);for(const k in attrs)n.setAttribute(k,attrs[k]);return n};
+
+  const cx=160,cy=160,R=142;
+  const faceFill=isNight?'#322B47':'#FFF9F2';
+  const ringStroke=isNight?'#5A4F7A':'#F1DCD6';
+  const tickCol=isNight?'#8C80AD':'#C9AEB6';
+  const numCol=isNight?'#FAF3EB':'#4A2F38';
+  const badgeBg=isNight?'#453C63':'#FFFFFF';
+  const badgeBd=isNight?'#9F8ED4':'#E8869F';
+
+  // Piringan utama
+  svg.append(el('circle',{cx,cy,r:R,fill:faceFill,stroke:ringStroke,'stroke-width':3}));
+  svg.append(el('circle',{cx,cy,r:R-28,fill:'none',stroke:ringStroke,'stroke-width':1,'stroke-dasharray':'2 4'}));
+
+  // Busur Tidur (termasuk lintas sesi)
+  const sleepEvents=V.filter(r=>r.type==='tidur'||r.type==='bangun').sort((a,b)=>a.ts-b.ts);
+  const intervals=[];
+  let openSleep=null;
+  for(const ev of sleepEvents){
+    if(ev.type==='tidur'){openSleep=ev.ts;}
+    else if(ev.type==='bangun' && openSleep!==null){intervals.push([openSleep,ev.ts]);openSleep=null;}
+  }
+  if(openSleep!==null)intervals.push([openSleep,Date.now()]);
+
+  for(const [s0,e0] of intervals){
+    const s=Math.max(s0,win.start),e=Math.min(e0,win.end);
+    if(e>s){
+      const a1=((s-win.start)/43200000)*360 - 90;
+      const a2=((e-win.start)/43200000)*360 - 90;
+      const rArc=R-10;
+      const rad1=a1*Math.PI/180,rad2=a2*Math.PI/180;
+      const x1=cx+rArc*Math.cos(rad1),y1=cy+rArc*Math.sin(rad1);
+      const x2=cx+rArc*Math.cos(rad2),y2=cy+rArc*Math.sin(rad2);
+      const large=(a2-a1)>180?1:0;
+      svg.append(el('path',{
+        d:`M ${x1.toFixed(1)} ${y1.toFixed(1)} A ${rArc} ${rArc} 0 ${large} 1 ${x2.toFixed(1)} ${y2.toFixed(1)}`,
+        fill:'none',stroke:isNight?'#7C69B5':'#F5A3B8','stroke-width':8,'stroke-linecap':'round',opacity:'0.65'
+      }));
+    }
+  }
+
+  // Garis menit & angka jam 1..12
+  for(let i=0;i<60;i++){
+    const ang=(i*6-90)*Math.PI/180;
+    const isHr=i%5===0;
+    const r1=R-(isHr?10:5),r2=R-2;
+    svg.append(el('line',{
+      x1:(cx+r1*Math.cos(ang)).toFixed(1),y1:(cy+r1*Math.sin(ang)).toFixed(1),
+      x2:(cx+r2*Math.cos(ang)).toFixed(1),y2:(cy+r2*Math.sin(ang)).toFixed(1),
+      stroke:tickCol,'stroke-width':isHr?2:1
+    }));
+  }
+  for(let h=1;h<=12;h++){
+    const ang=(h*30-90)*Math.PI/180;
+    const rNum=R-21;
+    const tx=el('text',{
+      x:(cx+rNum*Math.cos(ang)).toFixed(1),
+      y:(cy+rNum*Math.sin(ang)+4).toFixed(1),
+      'text-anchor':'middle',fill:numCol,'font-size':'12','font-weight':'700'
+    });
+    tx.textContent=h;
+    svg.append(tx);
+  }
+
+  // Ikon sesi Matahari / Bulan di tengah atas
+  const sessIcon=el('text',{x:cx,y:cy-32,'text-anchor':'middle','font-size':'22'});
+  sessIcon.textContent=isNight?'🌙':'☀️';
+  const sessLbl=el('text',{x:cx,y:cy-16,'text-anchor':'middle',fill:tickCol,'font-size':'10','font-weight':'600'});
+  sessLbl.textContent=isNight?'00.00 – 12.00':'12.00 – 24.00';
+  svg.append(sessIcon,sessLbl);
+
+  // Jarum jam & menit jika sesi LIVE
+  if(win.isLive){
+    const now=new Date();
+    const mins=(now.getHours()%12)*60 + now.getMinutes();
+    const hAng=(mins*0.5 - 90)*Math.PI/180;
+    const mAng=(now.getMinutes()*6 - 90)*Math.PI/180;
+    const handCol=isNight?'#E8869F':'#4A2F38';
+    svg.append(el('line',{x1:cx,y1:cy,x2:(cx+52*Math.cos(hAng)).toFixed(1),y2:(cy+52*Math.sin(hAng)).toFixed(1),stroke:handCol,'stroke-width':4,'stroke-linecap':'round'}));
+    svg.append(el('line',{x1:cx,y1:cy,x2:(cx+78*Math.cos(mAng)).toFixed(1),y2:(cy+78*Math.sin(mAng)).toFixed(1),stroke:handCol,'stroke-width':2.5,'stroke-linecap':'round'}));
+  }
+  svg.append(el('circle',{cx,cy,r:4.5,fill:'#E8869F'}));
+
+  // Plot Lencana Aktivitas (2 jalur anti-tumpuk)
+  const placed=[];
+  for(const item of sessItems){
+    const deg=((item.ts-win.start)/43200000)*360 - 90;
+    const rad=deg*Math.PI/180;
+    // Cek kedekatan sudut (< 14 derajat) untuk geser radius ke jalur dalam
+    const nearCount=placed.filter(pDeg=>Math.abs(pDeg-deg)<14).length;
+    if(nearCount>=2)continue; // Maks 2 tumpuk agar tidak sesak
+    const rIcon=nearCount===0?98:72;
+    placed.push(deg);
+
+    const ix=cx+rIcon*Math.cos(rad);
+    const iy=cy+rIcon*Math.sin(rad);
+    const grp=el('g',{transform:`translate(${ix.toFixed(1)},${iy.toFixed(1)})`});
+    grp.append(el('circle',{cx:0,cy:0,r:13,fill:badgeBg,stroke:badgeBd,'stroke-width':1.6}));
+    const emo=el('text',{x:0,y:4.5,'text-anchor':'middle','font-size':'14'});
+    emo.textContent=(T[item.type]||['•'])[0];
+    grp.append(emo);
+    svg.append(grp);
+  }
+}
+
+function renderHist(){
+  const V=mine(),win=getSessionWindow(),H=$('hist');
+  H.textContent='';H.className='sh-body';
+  $('tabSess').classList.toggle('act',histTab==='sess');
+  $('tabAll').classList.toggle('act',histTab==='all');
+  $('htitle').textContent=(clkPeriod==='night'?'🌙 Sesi 00.00–12.00':'☀️ Sesi 12.00–24.00')+' ('+$('clkDate').textContent+')';
+
+  const list=histTab==='sess'
+    ? V.filter(r=>r.ts>=win.start && r.ts<win.end)
+    : V.slice(0,80);
+
+  if(!list.length){
+    const empty=document.createElement('div');
+    empty.className='note';empty.style.padding='16px 0';empty.style.textAlign='center';
+    empty.textContent=histTab==='sess'?'Belum ada catatan pada sesi waktu ini.':'Belum ada catatan.';
+    H.append(empty);return;
+  }
+  for(const r of list){
     const w=document.createElement('div');w.className='row';
     const t=document.createElement('span');t.className='t';
     t.textContent=(ymd(r.ts)===ymd(Date.now())?'':p(D(r.ts).getDate())+'/'+p(D(r.ts).getMonth()+1)+' ')+hms(r.ts).slice(0,5);
@@ -166,8 +398,25 @@ function render(){
     ed.onclick=()=>openEdit(r);
     const x=document.createElement('button');x.textContent='✕';x.title='Hapus catatan';
     x.onclick=()=>{if(x.dataset.c){del(r.id)}else{x.dataset.c=1;x.textContent='Hapus?';setTimeout(()=>{x.textContent='✕';delete x.dataset.c},3000)}};
-    w.append(t,a,d,ed,x);H.append(w)}
+    w.append(t,a,d,ed,x);H.append(w);
+  }
 }
+
+// Kontrol Jam & Pop-up Riwayat
+$('prevDay').onclick=()=>{clkManual=true;clkDayOffset--;render()};
+$('nextDay').onclick=()=>{clkManual=true;clkDayOffset++;render()};
+$('btnNight').onclick=()=>{clkManual=true;clkPeriod='night';render()};
+$('btnDay').onclick=()=>{clkManual=true;clkPeriod='day';render()};
+$('btnNow').onclick=()=>{clkManual=false;syncClockState();render()};
+
+const openHist=()=>{histTab='sess';$('hmod').hidden=false;renderHist()};
+$('clkWrap').onclick=openHist;
+$('clkHint').onclick=openHist;
+$('hclose').onclick=()=>{$('hmod').hidden=true};
+$('hmod').onclick=e=>{if(e.target===$('hmod'))$('hmod').hidden=true};
+$('tabSess').onclick=()=>{histTab='sess';renderHist()};
+$('tabAll').onclick=()=>{histTab='all';renderHist()};
+
 async function del(id){const{error}=await sb.from('activities').delete().eq('id',id);if(error)return setSt('Gagal menghapus: '+error.message);rows=rows.filter(r=>r.id!==id);render()}
 async function upd(id,patch){const{data,error}=await sb.from('activities').update(patch).eq('id',id).select().single();if(error)return setSt('Gagal menyimpan perubahan: '+error.message);upsert(data);render()}
 async function tap(k){
@@ -175,6 +424,7 @@ async function tap(k){
   if(k==='bangun'){const s=sleeping();if(s){rec.minutes=Math.max(0,Math.round((ts-s.ts)/60000));rec.detail='tidur '+dur(rec.minutes)}}
   const{data,error}=await sb.from('activities').insert(rec).select().single();
   if(error)return setSt('Gagal menyimpan: '+error.message);
+  clkManual=false;syncClockState();
   upsert(data);render();showToast(data.id,k,map(data));
 }
 function showToast(id,k,rec){
@@ -189,7 +439,6 @@ function showToast(id,k,rec){
     const newIso=fromLocalInput(dt.value);
     if(newIso && dt.value!==toLocalInput(rec.ts)){
       patch.ts=newIso;
-      // Hitung ulang durasi tidur jika aktivitasnya 'bangun'
       if(k==='bangun'){
         const prevTidur=mine().find(x=>x.type==='tidur' && x.ts<new Date(newIso).getTime());
         if(prevTidur){
@@ -229,21 +478,13 @@ $('esave').onclick=async()=>{
   const newType=$('etype').value;
   let newDet=$('edet').value.trim();
   if(U[newType]&&/^[\d.,]+$/.test(newDet))newDet+=U[newType];
-  const patch={
-    type:newType,
-    ts:newIso,
-    detail:newDet,
-    by_name:$('eby').value
-  };
+  const patch={type:newType,ts:newIso,detail:newDet,by_name:$('eby').value};
   if(newType==='bangun'){
     const prevTidur=mine().find(x=>x.type==='tidur' && x.id!==editId && x.ts<new Date(newIso).getTime());
-    if(prevTidur){
-      patch.minutes=Math.max(0,Math.round((new Date(newIso).getTime()-prevTidur.ts)/60000));
-    }
+    if(prevTidur)patch.minutes=Math.max(0,Math.round((new Date(newIso).getTime()-prevTidur.ts)/60000));
   }
   await upd(editId,patch);
-  $('emod').hidden=true;
-  editId=null;
+  $('emod').hidden=true;editId=null;
 };
 function exp(r){
   const n=new Date(),s=new Date(n.getFullYear(),n.getMonth(),n.getDate());
@@ -261,7 +502,7 @@ function exp(r){
   document.body.append(a);a.click();a.remove();
 }
 document.querySelectorAll('.exp button').forEach(b=>b.onclick=()=>exp(b.dataset.r));
-document.querySelectorAll('.pick button').forEach(b=>b.onclick=()=>{subj=b.dataset.s;route()});
+document.querySelectorAll('.pick button').forEach(b=>b.onclick=()=>{subj=b.dataset.s;clkManual=false;route()});
 $('back').onclick=()=>{subj=null;route()};
 
 async function load(){
