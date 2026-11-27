@@ -13,6 +13,7 @@ header{display:flex;justify-content:space-between;align-items:center;gap:8px}
 h1{font-size:1.3rem;margin:6px 0}h2{font-size:1rem;margin:22px 0 8px;color:var(--mut)}
 select,input{font:inherit;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:8px 10px}
 .note{color:var(--mut);font-size:.85rem;margin:4px 0}
+.role-pill{background:var(--pk);color:var(--tx);padding:3px 9px;border-radius:99px;font-weight:600;font-size:.82rem}
 .hi{background:var(--pk);border-radius:18px;padding:16px 18px;margin:10px 0;font:700 1.15rem/1.35 system-ui}
 .card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:10px 12px;margin:10px 0;font-size:.92rem;line-height:1.5}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
@@ -72,7 +73,14 @@ select,input{font:inherit;color:var(--tx);background:var(--card);border:1px soli
 .mact button{flex:1;border:0;border-radius:12px;padding:10px;font:600 .95rem system-ui;cursor:pointer}
 #esave{background:var(--pk);color:var(--tx)}#ecancel{background:var(--bd);color:var(--tx)}
 </style></head><body><div class="wrap">
-<header><h1 id="ttl">📒 Catatan Keluarga</h1><span><label class="note">Saya: <select id="who"><option>Ayah</option><option>Ibu</option></select></label> <button class="link" id="back" hidden>← Ganti</button> <button class="link" id="out" hidden>Keluar</button></span></header>
+<header>
+  <h1 id="ttl">📒 Catatan Keluarga</h1>
+  <span>
+    <span id="whoWrap" class="role-pill" hidden></span>
+    <button class="link" id="back" hidden>← Ganti</button>
+    <button class="link" id="out" hidden>Keluar</button>
+  </span>
+</header>
 <div id="st" class="note">Menghubungkan…</div>
 
 <div id="login" class="card" hidden>
@@ -164,6 +172,12 @@ select,input{font:inherit;color:var(--tx);background:var(--card);border:1px soli
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script src="config.js"></script>
 <script>
+// Pemetaan Email Akun ke Peran Otomatis
+const ROLE_BY_EMAIL={
+  'mehilmy91@gmail.com':'Ayah',
+  'efrinita21@gmail.com':'Ibu'
+};
+
 const T={susu:['🍼','Susu','ml, mis. 120'],asi:['🤱','ASI','mis. 100 ml / kiri 15 mnt'],sufor:['🍼','Sufor','ml, mis. 120'],bak:['💧','BAK','catatan'],bab:['💩','BAB','warna / konsistensi'],tidur:['😴','Tidur','catatan'],bangun:['☀️','Bangun','catatan'],gumoh:['🤮','Gumoh','catatan'],obat:['💊','Obat','nama & dosis'],suhu:['🌡️','Suhu','°C, mis. 36.8'],mandi:['🛁','Mandi','catatan'],
   pompa:['🥛','Pompa ASI','ml, mis. 100'],makan:['🍽️','Makan','menu'],minum:['🚰','Minum','ml, mis. 250'],tensi:['🩺','Tensi','mis. 120/80'],bb:['⚖️','Berat','kg, mis. 58.5'],keluhan:['📝','Keluhan','catatan'],olahraga:['🚶','Jalan/senam','menit / catatan']};
 const U={susu:' ml',sufor:' ml',pompa:' ml',minum:' ml',suhu:' °C',bb:' kg'};
@@ -184,8 +198,14 @@ const map=r=>({id:r.id,ts:new Date(r.ts).getTime(),type:r.type,d:r.detail||'',mn
 let rows=[],who='Ayah',tt,ch=null,started=false,sb=null,authed=false,subj=null,editId=null;
 let clkDayOffset=0,clkPeriod=new Date().getHours()<12?'night':'day',clkManual=false,histTab='sess';
 
-try{who=localStorage.getItem('who')||'Ayah'}catch(e){}
-$('who').value=who;$('who').onchange=e=>{who=e.target.value;try{localStorage.setItem('who',who)}catch(x){}};
+function setUserRole(email){
+  const clean=(email||'').trim().toLowerCase();
+  who=ROLE_BY_EMAIL[clean] || (clean.includes('efri')?'Ibu':'Ayah');
+  const badge=$('whoWrap');
+  badge.textContent=(who==='Ibu'?'🤱 Ibu':'👨 Ayah');
+  badge.hidden=false;
+}
+
 try{if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js')}catch(e){}
 
 const mine=()=>rows.filter(r=>r.sub===subj);
@@ -220,7 +240,7 @@ function getSessionWindow(){
 
 function route(){
   $('login').hidden=authed;$('home').hidden=!(authed&&!subj);$('app').hidden=!(authed&&subj);
-  $('out').hidden=!authed;$('back').hidden=!(authed&&subj);
+  $('out').hidden=!authed;$('back').hidden=!(authed&&subj);$('whoWrap').hidden=!authed;
   $('ttl').textContent=subj==='ibu'?'🤱 Catatan Ibu':subj==='anak'?'🍼 Catatan Anak':'📒 Catatan Keluarga';
   $('toast').hidden=true;$('emod').hidden=true;$('hmod').hidden=true;
   $('hi').textContent=GREET[subj]||'';
@@ -276,11 +296,9 @@ function renderClock(V){
   const badgeBg=isNight?'#453C63':'#FFFFFF';
   const badgeBd=isNight?'#9F8ED4':'#E8869F';
 
-  // Piringan utama
   svg.append(el('circle',{cx,cy,r:R,fill:faceFill,stroke:ringStroke,'stroke-width':3}));
   svg.append(el('circle',{cx,cy,r:R-28,fill:'none',stroke:ringStroke,'stroke-width':1,'stroke-dasharray':'2 4'}));
 
-  // Busur Tidur (termasuk lintas sesi)
   const sleepEvents=V.filter(r=>r.type==='tidur'||r.type==='bangun').sort((a,b)=>a.ts-b.ts);
   const intervals=[];
   let openSleep=null;
@@ -307,7 +325,6 @@ function renderClock(V){
     }
   }
 
-  // Garis menit & angka jam 1..12
   for(let i=0;i<60;i++){
     const ang=(i*6-90)*Math.PI/180;
     const isHr=i%5===0;
@@ -330,14 +347,12 @@ function renderClock(V){
     svg.append(tx);
   }
 
-  // Ikon sesi Matahari / Bulan di tengah atas
   const sessIcon=el('text',{x:cx,y:cy-32,'text-anchor':'middle','font-size':'22'});
   sessIcon.textContent=isNight?'🌙':'☀️';
   const sessLbl=el('text',{x:cx,y:cy-16,'text-anchor':'middle',fill:tickCol,'font-size':'10','font-weight':'600'});
   sessLbl.textContent=isNight?'00.00 – 12.00':'12.00 – 24.00';
   svg.append(sessIcon,sessLbl);
 
-  // Jarum jam & menit jika sesi LIVE
   if(win.isLive){
     const now=new Date();
     const mins=(now.getHours()%12)*60 + now.getMinutes();
@@ -349,14 +364,12 @@ function renderClock(V){
   }
   svg.append(el('circle',{cx,cy,r:4.5,fill:'#E8869F'}));
 
-  // Plot Lencana Aktivitas (2 jalur anti-tumpuk)
   const placed=[];
   for(const item of sessItems){
     const deg=((item.ts-win.start)/43200000)*360 - 90;
     const rad=deg*Math.PI/180;
-    // Cek kedekatan sudut (< 14 derajat) untuk geser radius ke jalur dalam
     const nearCount=placed.filter(pDeg=>Math.abs(pDeg-deg)<14).length;
-    if(nearCount>=2)continue; // Maks 2 tumpuk agar tidak sesak
+    if(nearCount>=2)continue;
     const rIcon=nearCount===0?98:72;
     placed.push(deg);
 
@@ -402,7 +415,6 @@ function renderHist(){
   }
 }
 
-// Kontrol Jam & Pop-up Riwayat
 $('prevDay').onclick=()=>{clkManual=true;clkDayOffset--;render()};
 $('nextDay').onclick=()=>{clkManual=true;clkDayOffset++;render()};
 $('btnNight').onclick=()=>{clkManual=true;clkPeriod='night';render()};
@@ -431,7 +443,7 @@ function showToast(id,k,rec){
   const t=$('toast'),i=$('tin'),dt=$('tts');
   t.hidden=false;i.value='';i.placeholder=T[k][2];
   dt.value=toLocalInput(rec.ts);
-  $('tmsg').textContent='Tercatat: '+T[k][1]+' (ubah waktu/detail jika perlu)';
+  $('tmsg').textContent='Tercatat sebagai '+who+': '+T[k][1];
   $('tsave').onclick=async()=>{
     const patch={};
     let v=i.value.trim();
@@ -466,7 +478,7 @@ function openEdit(r){
   sel.value=r.type;
   $('ets').value=toLocalInput(r.ts);
   $('edet').value=r.d||'';
-  $('eby').value=r.by||'Ayah';
+  $('eby').value=r.by||who;
   $('emod').hidden=false;
 }
 $('ecancel').onclick=()=>{$('emod').hidden=true;editId=null};
@@ -508,7 +520,7 @@ $('back').onclick=()=>{subj=null;route()};
 async function load(){
   const{data,error}=await sb.from('activities').select('*').order('ts',{ascending:false}).limit(3000);
   if(error)return setSt('Gagal memuat: '+error.message);
-  rows=data.map(map);setSt('Tersambung · data dibagi dengan ayah dan ibu');render();
+  rows=data.map(map);setSt('Tersambung sebagai '+who+' · data dibagi bersama');render();
 }
 function start(){
   load();
@@ -529,7 +541,12 @@ try{
   if(!c.url||!c.key||c.url.startsWith('ISI_'))throw new Error('config.js belum diisi (URL dan key Supabase).');
   sb=supabase.createClient(c.url,c.key);
   sb.auth.onAuthStateChange((ev,sess)=>{
-    if(sess){authed=true;route();if(!started){started=true;setTimeout(start,0)}}
+    if(sess){
+      authed=true;
+      setUserRole(sess.user && sess.user.email);
+      route();
+      if(!started){started=true;setTimeout(start,0)}
+    }
     else{authed=false;subj=null;started=false;if(ch){sb.removeChannel(ch);ch=null}rows=[];route();setSt('Silakan masuk.')}
   });
 }catch(e){setSt(e.message)}
